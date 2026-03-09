@@ -2,4 +2,4 @@
 
 FreeCodeCamp.org https://www.youtube.com/watch?v=tdsQwuyS6DQ
 
-Timestamp: 12:15
+Timestamp: 18:19
