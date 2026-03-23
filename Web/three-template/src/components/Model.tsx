@@ -1,19 +1,32 @@
-import { useGLTF } from "@react-three/drei";
+import { useGLTF, Center } from "@react-three/drei";
+import { useFrame } from "@react-three/fiber";
+import { useRef } from "react";
 import * as THREE from "three";
 
 type GLTFResult = {
-  nodes: { rubber_duck_toy: THREE.Mesh };
-  materials: { rubber_duck_toy: THREE.MeshStandardMaterial };
+  nodes: { Text: THREE.Mesh };
+  materials: { "Material.001": THREE.MeshStandardMaterial };
 };
 
 export function Model() {
-  const { nodes, materials } = useGLTF("/models/model/model.gltf") as unknown as GLTFResult;
+  const { nodes, materials } = useGLTF(
+    "/models/model/model.gltf",
+  ) as unknown as GLTFResult;
+  const ref = useRef<THREE.Group>(null);
+
+  useFrame((_, delta) => {
+    if (ref.current) ref.current.rotation.y += delta * 0.8;
+  });
 
   return (
-    <mesh
-      geometry={nodes.rubber_duck_toy.geometry}
-      material={materials.rubber_duck_toy}
-      scale={7}
-    />
+    <group ref={ref}>
+      <Center>
+        <mesh
+          geometry={nodes.Text.geometry}
+          material={materials["Material.001"]}
+          rotation={[-Math.PI / -2, 0, 0]}
+        />
+      </Center>
+    </group>
   );
 }
