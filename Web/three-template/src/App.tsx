@@ -1,5 +1,5 @@
-import Scene from "./components/Scene";
+import Carousel from "./components/Carousel";
 
 export default function App() {
-  return <Scene />;
+  return <Carousel />;
 }

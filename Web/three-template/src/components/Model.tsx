@@ -1,4 +1,4 @@
-import { useGLTF, Center } from "@react-three/drei";
+import { useGLTF, Center, MeshTransmissionMaterial } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useRef } from "react";
 import * as THREE from "three";
@@ -9,7 +9,7 @@ type GLTFResult = {
 };
 
 export function Model() {
-  const { nodes, materials } = useGLTF(
+  const { nodes } = useGLTF(
     "/models/model/model.gltf",
   ) as unknown as GLTFResult;
   const ref = useRef<THREE.Group>(null);
@@ -23,9 +23,23 @@ export function Model() {
       <Center>
         <mesh
           geometry={nodes.Text.geometry}
-          material={materials["Material.001"]}
           rotation={[-Math.PI / -2, 0, 0]}
-        />
+        >
+          <MeshTransmissionMaterial
+            transmission={1}
+            roughness={0.05}
+            thickness={0.8}
+            ior={1.5}
+            chromaticAberration={0.08}
+            anisotropy={0.1}
+            distortion={0.15}
+            distortionScale={0.3}
+            temporalDistortion={0.1}
+            color="#ffffff"
+            backside={true}
+            samples={16}
+          />
+        </mesh>
       </Center>
     </group>
   );

@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 * {
   margin: 0;
   padding: 0;
@@ -5,6 +7,6 @@
 }
 
 body {
-  background-color: #444444;
+  background-color: #0d0d1a;
   overflow: hidden;
 }
