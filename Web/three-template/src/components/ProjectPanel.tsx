@@ -66,7 +66,7 @@ export default function ProjectPanel({
       className="absolute right-0 top-12 z-200 w-72 rounded-2xl border border-white/15 bg-white/8 shadow-2xl backdrop-blur-3xl"
     >
       {/* Header */}
-      <div className="flex items-center justify-between" style={{ padding: "14px 20px 12px" }}>
+      <div className="flex items-center justify-between px-5 pt-4 pb-3">
         <span className="text-sm font-semibold text-white/90">Projekty</span>
         <button
           onClick={handleClose}
@@ -79,8 +79,8 @@ export default function ProjectPanel({
       </div>
 
       {/* Search */}
-      <div style={{ padding: "0 20px 12px" }}>
-        <div className="flex items-center gap-2 rounded-xl border border-white/15 bg-white/8 focus-within:border-white/30 transition-colors" style={{ padding: "10px 12px" }}>
+      <div className="px-5 pb-3">
+        <div className="flex items-center gap-2 rounded-xl border border-white/15 bg-white/8 px-3 py-2.5 focus-within:border-white/30 transition-colors">
           <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0 text-white/40" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
             <circle cx="11" cy="11" r="8" />
             <path d="m21 21-4.35-4.35" />
@@ -96,17 +96,16 @@ export default function ProjectPanel({
       </div>
 
       {/* Divider */}
-      <div className="border-t border-white/10" style={{ margin: "0 20px" }} />
+      <div className="mx-5 border-t border-white/10" />
 
       {/* List */}
-      <ul className="max-h-64 overflow-y-auto" style={{ padding: "8px 12px 12px" }}>
+      <ul className="max-h-64 overflow-y-auto px-3 py-2 pb-3">
         {filtered.map((project) => {
           const active = selectedIds.has(project.id);
           return (
             <li
               key={project.id}
-              className="flex items-center justify-between gap-4 rounded-xl transition-colors hover:bg-white/8"
-              style={{ padding: "10px 8px" }}
+              className="flex items-center justify-between gap-4 rounded-xl px-2 py-2.5 transition-colors hover:bg-white/8"
             >
               <div className="min-w-0">
                 <p className="text-sm font-medium text-white">{project.title}</p>
