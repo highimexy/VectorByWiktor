@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
+import { HexColorPicker } from "react-colorful";
 
 export type MaterialType = "chrome" | "glass" | "wireframe";
 
@@ -29,6 +30,7 @@ export default function SceneControls({
   onScreenshot,
 }: SceneControlsProps) {
   const [open, setOpen] = useState(false);
+  const [colorOpen, setColorOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -47,7 +49,7 @@ export default function SceneControls({
     >
       {/* Toggle button */}
       <button
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => { setOpen((v) => !v); setColorOpen(false); }}
         aria-label="Ustawienia sceny"
         className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border border-white/15 bg-white/8 text-white backdrop-blur-md transition-all hover:bg-white/18"
       >
@@ -75,7 +77,7 @@ export default function SceneControls({
           <div className="flex items-center justify-between px-5 pt-4 pb-3">
             <span className="text-sm font-semibold text-white/90">Scena</span>
             <button
-              onClick={() => setOpen(false)}
+              onClick={() => { setOpen(false); setColorOpen(false); }}
               className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border-none bg-white/10 text-white/60 transition-colors hover:bg-white/20 hover:text-white"
             >
               <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round">
@@ -89,14 +91,39 @@ export default function SceneControls({
           <ul className="px-3 py-2 pb-3">
 
             {/* Background color */}
-            <li className="flex items-center justify-between gap-4 rounded-xl px-2 py-2.5">
-              <p className="text-sm font-medium text-white">Tło</p>
-              <input
-                type="color"
-                value={bgColor}
-                onChange={(e) => onBgColorChange(e.target.value)}
-                className="h-7 w-12 cursor-pointer rounded-lg border border-white/15 bg-transparent p-0.5"
-              />
+            <li className="flex flex-col rounded-xl px-2 py-2.5">
+              <div className="flex items-center justify-between gap-4">
+                <p className="text-sm font-medium text-white">Tło</p>
+                <button
+                  onClick={() => setColorOpen((v) => !v)}
+                  className="h-7 w-12 cursor-pointer rounded-lg border border-white/15 transition-all hover:border-white/40"
+                  style={{ backgroundColor: bgColor }}
+                />
+              </div>
+
+              {colorOpen && (
+                <div className="mt-3">
+                  <HexColorPicker
+                    color={bgColor}
+                    onChange={onBgColorChange}
+                    style={{ width: "100%", height: "160px" }}
+                  />
+                  <div className="mt-2 flex items-center gap-2 rounded-lg border border-white/15 bg-white/5 px-2.5 py-1.5">
+                    <span className="text-xs text-white/40">#</span>
+                    <input
+                      type="text"
+                      value={bgColor.replace("#", "")}
+                      onChange={(e) => {
+                        const v = "#" + e.target.value.replace(/[^0-9a-fA-F]/g, "").slice(0, 6);
+                        if (v.length === 7) onBgColorChange(v);
+                      }}
+                      className="w-full bg-transparent text-sm text-white outline-none"
+                      maxLength={6}
+                      spellCheck={false}
+                    />
+                  </div>
+                </div>
+              )}
             </li>
 
             {/* Material */}
