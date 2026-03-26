@@ -73,7 +73,7 @@ export default function Carousel() {
         onClick={() => goTo(current - 1)}
         disabled={current === 0}
         aria-label="Poprzedni"
-        className="group fixed left-0 top-0 z-50 flex h-full w-20 cursor-pointer items-center justify-center border-none bg-transparent disabled:opacity-0 disabled:pointer-events-none transition-opacity"
+        className="group fixed left-4 top-1/2 -translate-y-1/2 z-50 flex h-24 w-12 cursor-pointer items-center justify-center border-none bg-transparent disabled:opacity-0 disabled:pointer-events-none transition-opacity"
       >
         <svg
           viewBox="0 0 24 24"
@@ -93,7 +93,7 @@ export default function Carousel() {
         onClick={() => goTo(current + 1)}
         disabled={current === activeProjects.length - 1}
         aria-label="Następny"
-        className="group fixed right-0 top-0 z-50 flex h-full w-20 cursor-pointer items-center justify-center border-none bg-transparent disabled:opacity-0 disabled:pointer-events-none transition-opacity"
+        className="group fixed right-4 top-1/2 -translate-y-1/2 z-50 flex h-24 w-12 cursor-pointer items-center justify-center border-none bg-transparent disabled:opacity-0 disabled:pointer-events-none transition-opacity"
       >
         <svg
           viewBox="0 0 24 24"

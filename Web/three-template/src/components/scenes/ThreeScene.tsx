@@ -2,6 +2,13 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Environment } from "@react-three/drei";
 import { Suspense } from "react";
 import { ThreeModel } from "../models/ThreeModel";
+import type { MaterialType } from "./SceneControls";
+
+interface ThreeSceneProps {
+  bgColor?: string;
+  materialType?: MaterialType;
+  autoRotate?: boolean;
+}
 
 function BackgroundBlobs() {
   return (
@@ -54,14 +61,18 @@ function BackgroundBlobs() {
   );
 }
 
-export default function ThreeScene() {
+export default function ThreeScene({
+  bgColor = "#0d0d1a",
+  materialType = "glass",
+  autoRotate = true,
+}: ThreeSceneProps) {
   return (
     <Canvas
       camera={{ position: [0, 0, -4], fov: 50 }}
       style={{ width: "100%", height: "100%" }}
-      gl={{ alpha: false }}
+      gl={{ alpha: false, preserveDrawingBuffer: true }}
     >
-      <color attach="background" args={["#0d0d1a"]} />
+      <color attach="background" args={[bgColor]} />
       <ambientLight intensity={0.5} />
       <pointLight position={[5, 5, 5]} intensity={3} color="#ffffff" />
       <pointLight position={[-5, -3, 3]} intensity={2} color="#8060ff" />
@@ -71,7 +82,7 @@ export default function ThreeScene() {
       </Suspense>
       <BackgroundBlobs />
       <Suspense fallback={null}>
-        <ThreeModel />
+        <ThreeModel materialType={materialType} autoRotate={autoRotate} />
       </Suspense>
     </Canvas>
   );

@@ -2,15 +2,26 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Environment } from "@react-three/drei";
 import { Suspense } from "react";
 import { OesyModel } from "../models/OesyModel";
+import type { MaterialType } from "./SceneControls";
 
-export default function OesyScene() {
+interface OesySceneProps {
+  bgColor?: string;
+  materialType?: MaterialType;
+  autoRotate?: boolean;
+}
+
+export default function OesyScene({
+  bgColor = "#0a0010",
+  materialType = "chrome",
+  autoRotate = true,
+}: OesySceneProps) {
   return (
     <Canvas
       camera={{ position: [0, 0, -4], fov: 50 }}
       style={{ width: "100%", height: "100%" }}
-      gl={{ alpha: false }}
+      gl={{ alpha: false, preserveDrawingBuffer: true }}
     >
-      <color attach="background" args={["#0a0010"]} />
+      <color attach="background" args={[bgColor]} />
       <ambientLight intensity={0.3} color="#6633cc" />
       <pointLight position={[5, 5, 5]} intensity={5} color="#ffffff" />
       <pointLight position={[-5, 3, 2]} intensity={10} color="#8833ff" />
@@ -22,7 +33,7 @@ export default function OesyScene() {
         <Environment preset="studio" />
       </Suspense>
       <Suspense fallback={null}>
-        <OesyModel />
+        <OesyModel materialType={materialType} autoRotate={autoRotate} />
       </Suspense>
     </Canvas>
   );
