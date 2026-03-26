@@ -7,7 +7,7 @@ import { usePanelContext } from "../context/PanelContext";
 export default function Carousel() {
   const [current, setCurrent] = useState(0);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(
-    new Set(ALL_PROJECTS.map((p) => p.id))
+    new Set(ALL_PROJECTS.map((p) => p.id)),
   );
   const { openPanel, setOpenPanel } = usePanelContext();
   const panelOpen = openPanel === "project";
@@ -35,7 +35,11 @@ export default function Carousel() {
       const newActive = ALL_PROJECTS.filter((p) => next.has(p.id));
       const currentId = activeProjects[current]?.id;
       if (currentId === id) {
-        gsap.to(trackRef.current, { x: 0, duration: 0.75, ease: "power3.inOut" });
+        gsap.to(trackRef.current, {
+          x: 0,
+          duration: 0.75,
+          ease: "power3.inOut",
+        });
         setCurrent(0);
       } else {
         const newIndex = newActive.findIndex((p) => p.id === currentId);
@@ -125,14 +129,19 @@ export default function Carousel() {
       </div>
 
       {/* Logo – top left */}
-      <div className="fixed left-4 top-4 z-50">
+      <a
+        href="https://wkowalczyk.pl"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed left-4 top-4 z-50"
+      >
         <img
           src="/favicon/VectorByWiktor.png"
           alt="VectorByWiktor"
           className="h-10 w-auto select-none opacity-90 hover:opacity-100 transition-opacity"
           draggable={false}
         />
-      </div>
+      </a>
 
       {/* Panel trigger + panel */}
       <div className="fixed right-4 top-4 z-150">
@@ -142,13 +151,13 @@ export default function Carousel() {
           className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border border-white/15 bg-white/8 text-white backdrop-blur-md transition-all hover:bg-white/18"
         >
           <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor">
-            <circle cx="5"  cy="5"  r="1.5" />
-            <circle cx="12" cy="5"  r="1.5" />
-            <circle cx="19" cy="5"  r="1.5" />
-            <circle cx="5"  cy="12" r="1.5" />
+            <circle cx="5" cy="5" r="1.5" />
+            <circle cx="12" cy="5" r="1.5" />
+            <circle cx="19" cy="5" r="1.5" />
+            <circle cx="5" cy="12" r="1.5" />
             <circle cx="12" cy="12" r="1.5" />
             <circle cx="19" cy="12" r="1.5" />
-            <circle cx="5"  cy="19" r="1.5" />
+            <circle cx="5" cy="19" r="1.5" />
             <circle cx="12" cy="19" r="1.5" />
             <circle cx="19" cy="19" r="1.5" />
           </svg>

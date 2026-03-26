@@ -17,7 +17,7 @@ export default function OesyScene({
 }: OesySceneProps) {
   return (
     <Canvas
-      camera={{ position: [0, 0, -4], fov: 50 }}
+      camera={{ position: [0, 0, -10], fov: 50 }}
       style={{ width: "100%", height: "100%" }}
       gl={{ alpha: false, preserveDrawingBuffer: true }}
     >
