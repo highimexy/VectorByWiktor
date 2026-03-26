@@ -1,7 +1,7 @@
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Environment } from "@react-three/drei";
 import { Suspense } from "react";
-import { OesyModel } from "./OesyModel";
+import { OesyModel } from "../models/OesyModel";
 
 export default function OesyScene() {
   return (

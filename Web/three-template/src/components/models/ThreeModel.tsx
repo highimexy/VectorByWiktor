@@ -8,7 +8,7 @@ type GLTFResult = {
   materials: { "Material.001": THREE.MeshStandardMaterial };
 };
 
-export function Model() {
+export function ThreeModel() {
   const { nodes } = useGLTF(
     "/models/main/model.gltf",
   ) as unknown as GLTFResult;

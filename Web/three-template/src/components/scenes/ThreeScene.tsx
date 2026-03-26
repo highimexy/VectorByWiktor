@@ -1,7 +1,7 @@
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Environment } from "@react-three/drei";
 import { Suspense } from "react";
-import { Model } from "./Model";
+import { ThreeModel } from "../models/ThreeModel";
 
 function BackgroundBlobs() {
   return (
@@ -54,7 +54,7 @@ function BackgroundBlobs() {
   );
 }
 
-export default function Scene() {
+export default function ThreeScene() {
   return (
     <Canvas
       camera={{ position: [0, 0, -4], fov: 50 }}
@@ -71,7 +71,7 @@ export default function Scene() {
       </Suspense>
       <BackgroundBlobs />
       <Suspense fallback={null}>
-        <Model />
+        <ThreeModel />
       </Suspense>
     </Canvas>
   );

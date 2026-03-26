@@ -1,4 +1,4 @@
-import OesyScene from "../OesyScene";
+import OesyScene from "../scenes/OesyScene";
 
 export default function OesySlide() {
   return (
