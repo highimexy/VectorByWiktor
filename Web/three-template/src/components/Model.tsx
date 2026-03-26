@@ -10,7 +10,7 @@ type GLTFResult = {
 
 export function Model() {
   const { nodes } = useGLTF(
-    "/models/model/model.gltf",
+    "/models/main/model.gltf",
   ) as unknown as GLTFResult;
   const ref = useRef<THREE.Group>(null);
 

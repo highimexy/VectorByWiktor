@@ -122,6 +122,16 @@ export default function Carousel() {
         ))}
       </div>
 
+      {/* Logo – top left */}
+      <div className="fixed left-4 top-4 z-50">
+        <img
+          src="/favicon/VectorByWiktor.png"
+          alt="VectorByWiktor"
+          className="h-10 w-auto select-none opacity-90 hover:opacity-100 transition-opacity"
+          draggable={false}
+        />
+      </div>
+
       {/* Panel trigger + panel */}
       <div className="fixed right-4 top-4 z-150">
         <button

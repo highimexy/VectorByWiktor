@@ -13,7 +13,7 @@ const chromeMaterial = new THREE.MeshPhysicalMaterial({
 });
 
 export function OesyModel() {
-  const { scene } = useGLTF("/models/model/OESY/oesy.gltf");
+  const { scene } = useGLTF("/models/oesy/oesy.gltf");
   const ref = useRef<THREE.Group>(null);
 
   useEffect(() => {
