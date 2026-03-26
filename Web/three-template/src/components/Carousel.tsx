@@ -2,13 +2,15 @@ import { useRef, useState } from "react";
 import gsap from "gsap";
 import { ALL_PROJECTS } from "../data/projects";
 import ProjectPanel from "./ProjectPanel";
+import { usePanelContext } from "../context/PanelContext";
 
 export default function Carousel() {
   const [current, setCurrent] = useState(0);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(
     new Set(ALL_PROJECTS.map((p) => p.id))
   );
-  const [panelOpen, setPanelOpen] = useState(false);
+  const { openPanel, setOpenPanel } = usePanelContext();
+  const panelOpen = openPanel === "project";
   const trackRef = useRef<HTMLDivElement>(null);
 
   const activeProjects = ALL_PROJECTS.filter((p) => selectedIds.has(p.id));
@@ -135,7 +137,7 @@ export default function Carousel() {
       {/* Panel trigger + panel */}
       <div className="fixed right-4 top-4 z-150">
         <button
-          onClick={() => setPanelOpen((v) => !v)}
+          onClick={() => setOpenPanel(panelOpen ? null : "project")}
           aria-label="Projekty"
           className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border border-white/15 bg-white/8 text-white backdrop-blur-md transition-all hover:bg-white/18"
         >
@@ -156,7 +158,7 @@ export default function Carousel() {
           <ProjectPanel
             selectedIds={selectedIds}
             onToggle={toggleProject}
-            onClose={() => setPanelOpen(false)}
+            onClose={() => setOpenPanel(null)}
           />
         )}
       </div>

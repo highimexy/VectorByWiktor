@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { HexColorPicker } from "react-colorful";
+import { usePanelContext } from "../../context/PanelContext";
 
 export type MaterialType = "chrome" | "glass" | "wireframe";
 
@@ -29,7 +30,8 @@ export default function SceneControls({
   onAutoRotateChange,
   onScreenshot,
 }: SceneControlsProps) {
-  const [open, setOpen] = useState(false);
+  const { openPanel, setOpenPanel } = usePanelContext();
+  const open = openPanel === "scene";
   const [colorOpen, setColorOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -49,7 +51,7 @@ export default function SceneControls({
     >
       {/* Toggle button */}
       <button
-        onClick={() => { setOpen((v) => !v); setColorOpen(false); }}
+        onClick={() => { setOpenPanel(open ? null : "scene"); setColorOpen(false); }}
         aria-label="Ustawienia sceny"
         className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border border-white/15 bg-white/8 text-white backdrop-blur-md transition-all hover:bg-white/18"
       >
@@ -77,7 +79,7 @@ export default function SceneControls({
           <div className="flex items-center justify-between px-5 pt-4 pb-3">
             <span className="text-sm font-semibold text-white/90">Scena</span>
             <button
-              onClick={() => { setOpen(false); setColorOpen(false); }}
+              onClick={() => { setOpenPanel(null); setColorOpen(false); }}
               className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border-none bg-white/10 text-white/60 transition-colors hover:bg-white/20 hover:text-white"
             >
               <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round">

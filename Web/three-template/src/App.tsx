@@ -1,5 +1,10 @@
 import Carousel from "./components/Carousel";
+import { PanelProvider } from "./context/PanelContext";
 
 export default function App() {
-  return <Carousel />;
+  return (
+    <PanelProvider>
+      <Carousel />
+    </PanelProvider>
+  );
 }
