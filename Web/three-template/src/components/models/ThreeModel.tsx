@@ -54,6 +54,45 @@ export function ThreeModel({ materialType = "glass", autoRotate = true }: ThreeM
           {materialType === "wireframe" && (
             <meshStandardMaterial wireframe color="#6b9dff" />
           )}
+          {materialType === "gold" && (
+            <meshPhysicalMaterial
+              metalness={1}
+              roughness={0.15}
+              color="#ffcc44"
+              iridescence={0.4}
+              iridescenceIOR={1.5}
+            />
+          )}
+          {materialType === "matte" && (
+            <meshStandardMaterial roughness={0.95} metalness={0} color="#cccccc" />
+          )}
+          {materialType === "neon" && (
+            <meshStandardMaterial
+              color="#000000"
+              emissive="#00ffcc"
+              emissiveIntensity={2.5}
+              roughness={1}
+              metalness={0}
+            />
+          )}
+          {materialType === "obsidian" && (
+            <meshPhysicalMaterial
+              roughness={0.02}
+              metalness={0.8}
+              color="#1a1a33"
+              reflectivity={1}
+            />
+          )}
+          {materialType === "hologram" && (
+            <meshPhysicalMaterial
+              transmission={0.6}
+              roughness={0}
+              iridescence={1}
+              iridescenceIOR={2.5}
+              color="#88aaff"
+              metalness={0.2}
+            />
+          )}
         </mesh>
       </Center>
     </group>

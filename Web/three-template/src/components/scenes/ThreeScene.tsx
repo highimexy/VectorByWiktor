@@ -67,12 +67,12 @@ export default function ThreeScene({
   autoRotate = true,
 }: ThreeSceneProps) {
   return (
+    <div style={{ width: "100%", height: "100%", backgroundColor: bgColor }}>
     <Canvas
       camera={{ position: [0, 0, -4], fov: 50 }}
       style={{ width: "100%", height: "100%" }}
-      gl={{ alpha: false, preserveDrawingBuffer: true }}
+      gl={{ alpha: true, preserveDrawingBuffer: true }}
     >
-      <color attach="background" args={[bgColor]} />
       <ambientLight intensity={0.5} />
       <pointLight position={[5, 5, 5]} intensity={3} color="#ffffff" />
       <pointLight position={[-5, -3, 3]} intensity={2} color="#8060ff" />
@@ -85,5 +85,6 @@ export default function ThreeScene({
         <ThreeModel materialType={materialType} autoRotate={autoRotate} />
       </Suspense>
     </Canvas>
+    </div>
   );
 }

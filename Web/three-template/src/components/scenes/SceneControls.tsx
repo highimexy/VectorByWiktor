@@ -2,8 +2,17 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { HexColorPicker } from "react-colorful";
 import { usePanelContext } from "../../context/PanelContext";
+import type { RecordPhase, GifQuality, GifResolution } from "../../utils/useGifExport";
 
-export type MaterialType = "chrome" | "glass" | "wireframe";
+export type MaterialType =
+  | "chrome"
+  | "glass"
+  | "wireframe"
+  | "gold"
+  | "matte"
+  | "neon"
+  | "obsidian"
+  | "hologram";
 
 interface SceneControlsProps {
   bgColor: string;
@@ -13,12 +22,27 @@ interface SceneControlsProps {
   autoRotate: boolean;
   onAutoRotateChange: (v: boolean) => void;
   onScreenshot: () => void;
+  onExportGif: () => void;
+  isRecording: boolean;
+  recordPhase: RecordPhase;
+  recordProgress: number;
+  gifTransparent: boolean;
+  onGifTransparentChange: (v: boolean) => void;
+  gifQuality: GifQuality;
+  onGifQualityChange: (v: GifQuality) => void;
+  gifResolution: GifResolution;
+  onGifResolutionChange: (v: GifResolution) => void;
 }
 
 const MATERIALS: { value: MaterialType; label: string }[] = [
   { value: "chrome", label: "Chrome" },
   { value: "glass", label: "Glass" },
-  { value: "wireframe", label: "Wire" },
+  { value: "wireframe", label: "Wireframe" },
+  { value: "gold", label: "Gold" },
+  { value: "matte", label: "Matte" },
+  { value: "neon", label: "Neon" },
+  { value: "obsidian", label: "Obsidian" },
+  { value: "hologram", label: "Hologram" },
 ];
 
 export default function SceneControls({
@@ -29,6 +53,16 @@ export default function SceneControls({
   autoRotate,
   onAutoRotateChange,
   onScreenshot,
+  onExportGif,
+  isRecording,
+  recordPhase,
+  recordProgress,
+  gifTransparent,
+  onGifTransparentChange,
+  gifQuality,
+  onGifQualityChange,
+  gifResolution,
+  onGifResolutionChange,
 }: SceneControlsProps) {
   const { openPanel, setOpenPanel } = usePanelContext();
   const open = openPanel === "scene";
@@ -131,21 +165,18 @@ export default function SceneControls({
             {/* Material */}
             <li className="flex items-center justify-between gap-4 rounded-xl px-2 py-2.5">
               <p className="text-sm font-medium text-white">Materiał</p>
-              <div className="flex overflow-hidden rounded-xl border border-white/15">
+              <select
+                value={material}
+                onChange={(e) => onMaterialChange(e.target.value as MaterialType)}
+                className="cursor-pointer rounded-xl border border-white/15 bg-white/8 px-3 py-1.5 text-xs text-white backdrop-blur-md outline-none transition-colors hover:bg-white/18 focus:border-white/30"
+                style={{ appearance: "none", backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "right 8px center", paddingRight: "28px" }}
+              >
                 {MATERIALS.map((m) => (
-                  <button
-                    key={m.value}
-                    onClick={() => onMaterialChange(m.value)}
-                    className={`cursor-pointer px-3 py-1.5 text-xs transition-colors ${
-                      material === m.value
-                        ? "bg-white/20 text-white"
-                        : "bg-transparent text-white/40 hover:text-white/70"
-                    }`}
-                  >
+                  <option key={m.value} value={m.value} style={{ background: "#1a1a2e", color: "#fff" }}>
                     {m.label}
-                  </button>
+                  </option>
                 ))}
-              </div>
+              </select>
             </li>
 
             {/* Auto-rotate */}
@@ -168,11 +199,67 @@ export default function SceneControls({
 
             <div className="mx-2 my-1 border-t border-white/10" />
 
-            {/* Screenshot */}
-            <li className="rounded-xl px-2 pt-2">
+            {/* GIF Export settings */}
+            <li className="flex flex-col gap-2 rounded-xl px-2 py-2">
+
+              {/* Quality + Resolution selects */}
+              <div className="grid grid-cols-2 gap-2">
+                <div className="flex flex-col gap-1">
+                  <span className="px-0.5 text-xs text-white/40">Jakość GIF</span>
+                  <select
+                    value={gifQuality}
+                    onChange={(e) => onGifQualityChange(e.target.value as GifQuality)}
+                    disabled={isRecording}
+                    className="cursor-pointer rounded-xl border border-white/15 bg-white/8 px-2.5 py-1.5 text-xs text-white backdrop-blur-md outline-none transition-colors hover:bg-white/18 disabled:opacity-40"
+                    style={{ appearance: "none" }}
+                  >
+                    <option value="low"    style={{ background: "#1a1a2e" }}>Niska</option>
+                    <option value="medium" style={{ background: "#1a1a2e" }}>Średnia</option>
+                    <option value="high"   style={{ background: "#1a1a2e" }}>Wysoka</option>
+                  </select>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <span className="px-0.5 text-xs text-white/40">Rozdzielczość</span>
+                  <select
+                    value={gifResolution}
+                    onChange={(e) => onGifResolutionChange(parseInt(e.target.value) as GifResolution)}
+                    disabled={isRecording}
+                    className="cursor-pointer rounded-xl border border-white/15 bg-white/8 px-2.5 py-1.5 text-xs text-white backdrop-blur-md outline-none transition-colors hover:bg-white/18 disabled:opacity-40"
+                    style={{ appearance: "none" }}
+                  >
+                    <option value={360} style={{ background: "#1a1a2e" }}>360 px</option>
+                    <option value={480} style={{ background: "#1a1a2e" }}>480 px</option>
+                    <option value={720} style={{ background: "#1a1a2e" }}>720 px</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Transparent toggle */}
+              <div className="flex items-center justify-between">
+                <p className="text-xs font-medium text-white/70">Transparent</p>
+                <button
+                  onClick={() => onGifTransparentChange(!gifTransparent)}
+                  disabled={isRecording}
+                  aria-label="Toggle transparent GIF"
+                  className={`relative h-6 w-10 shrink-0 cursor-pointer rounded-full border-none transition-colors duration-200 disabled:opacity-40 ${
+                    gifTransparent ? "bg-indigo-400" : "bg-white/20"
+                  }`}
+                >
+                  <span
+                    className={`absolute left-0 top-0.5 h-5 w-5 rounded-full bg-white shadow-md transition-transform duration-200 ${
+                      gifTransparent ? "translate-x-4.5" : "translate-x-0.5"
+                    }`}
+                  />
+                </button>
+              </div>
+
+            </li>
+
+            {/* Screenshot + GIF */}
+            <li className="flex gap-2 rounded-xl px-2 pt-2 pb-1">
               <button
                 onClick={onScreenshot}
-                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/8 py-2 text-sm text-white/60 transition-colors hover:bg-white/15 hover:text-white"
+                className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/8 py-2 text-sm text-white/60 transition-colors hover:bg-white/15 hover:text-white"
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -186,7 +273,29 @@ export default function SceneControls({
                   <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
                   <circle cx="12" cy="13" r="4" />
                 </svg>
-                Screenshot
+                PNG
+              </button>
+              <button
+                onClick={onExportGif}
+                disabled={isRecording}
+                className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/8 py-2 text-sm text-white/60 transition-colors hover:bg-white/15 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {isRecording ? (
+                  <>
+                    <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                    {recordPhase === "capturing"
+                      ? `Nagr. ${recordProgress}%`
+                      : `Enc. ${recordProgress}%`}
+                  </>
+                ) : (
+                  <>
+                    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10" />
+                      <polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none" />
+                    </svg>
+                    GIF
+                  </>
+                )}
               </button>
             </li>
 

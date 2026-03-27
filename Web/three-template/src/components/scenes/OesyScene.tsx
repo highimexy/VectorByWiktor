@@ -16,12 +16,12 @@ export default function OesyScene({
   autoRotate = true,
 }: OesySceneProps) {
   return (
+    <div style={{ width: "100%", height: "100%", backgroundColor: bgColor }}>
     <Canvas
       camera={{ position: [0, 0, -10], fov: 50 }}
       style={{ width: "100%", height: "100%" }}
-      gl={{ alpha: false, preserveDrawingBuffer: true }}
+      gl={{ alpha: true, preserveDrawingBuffer: true }}
     >
-      <color attach="background" args={[bgColor]} />
       <ambientLight intensity={0.3} color="#6633cc" />
       <pointLight position={[5, 5, 5]} intensity={5} color="#ffffff" />
       <pointLight position={[-5, 3, 2]} intensity={10} color="#8833ff" />
@@ -36,5 +36,6 @@ export default function OesyScene({
         <OesyModel materialType={materialType} autoRotate={autoRotate} />
       </Suspense>
     </Canvas>
+    </div>
   );
 }
