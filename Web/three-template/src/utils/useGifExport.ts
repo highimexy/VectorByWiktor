@@ -1,13 +1,12 @@
 import { useRef, useState } from "react";
 import type { RefObject } from "react";
 
-export type RecordPhase = "idle" | "capturing" | "encoding";
-export type GifQuality = "low" | "medium" | "high";
-export type GifResolution = 360 | 480 | 720;
-
-const FRAME_COUNT = 72;
-const FRAME_DELAY = 80; // ms between captured frames
-const YIELD_EVERY = 6;  // yield to browser every N encoded frames
+export type RecordPhase    = "idle" | "capturing" | "encoding";
+export type GifQuality     = "low" | "medium" | "high";
+export type GifResolution  = 240 | 360 | 480 | 640 | 720 | 1080;
+export type GifFps         = 10 | 15 | 20 | 25 | 30;
+export type GifDuration    = 2 | 3 | 5 | 8 | 10 | 15;
+const YIELD_EVERY = 6;    // yield to browser every N encoded frames
 
 const QUALITY_CFG = {
   low:    { format: "rgb444"  as const, sampleEvery: 8, dither: false },
@@ -15,16 +14,15 @@ const QUALITY_CFG = {
   high:   { format: "rgb565"  as const, sampleEvery: 2, dither: true  },
 };
 
+type PaletteEntry = number[]; // [r,g,b] or [r,g,b,a]
+type Palette      = PaletteEntry[];
+
 /**
- * Build a 5-bit/channel (32³ = 32 768 entry) nearest-colour lookup table.
- * Cost: ~8 M ops, paid once per export — makes per-pixel FS dithering O(1).
+ * Build a 5-bit/channel (32³ = 32 768 entry) nearest-colour LUT.
+ * Paid once per export — reduces per-pixel colour matching to O(1).
  */
-function buildLUT(
-  palette: Uint8Array,
-  stride: number,
-  skipIndex: number,
-): Uint8Array {
-  const n = Math.floor(palette.length / stride);
+function buildLUT(palette: Palette, skipIndex: number): Uint8Array {
+  const n   = palette.length;
   const lut = new Uint8Array(32768);
   for (let r5 = 0; r5 < 32; r5++) {
     const r = (r5 << 3) | (r5 >> 2);
@@ -32,14 +30,12 @@ function buildLUT(
       const g = (g5 << 3) | (g5 >> 2);
       for (let b5 = 0; b5 < 32; b5++) {
         const b = (b5 << 3) | (b5 >> 2);
-        let best = 0;
-        let bestD = Infinity;
+        let best = 0, bestD = Infinity;
         for (let c = 0; c < n; c++) {
           if (c === skipIndex) continue;
-          const dr = r - palette[c * stride];
-          const dg = g - palette[c * stride + 1];
-          const db = b - palette[c * stride + 2];
-          const d = dr * dr + dg * dg + db * db;
+          const p  = palette[c];
+          const dr = r - p[0], dg = g - p[1], db = b - p[2];
+          const d  = dr * dr + dg * dg + db * db;
           if (d < bestD) { bestD = d; best = c; if (d === 0) break; }
         }
         lut[(r5 << 10) | (g5 << 5) | b5] = best;
@@ -52,8 +48,7 @@ function buildLUT(
 /** Floyd-Steinberg dithering with LUT-accelerated colour matching. */
 function ditherFS(
   rgba: Uint8ClampedArray,
-  palette: Uint8Array,
-  stride: number,
+  palette: Palette,
   lut: Uint8Array,
   width: number,
   height: number,
@@ -87,9 +82,10 @@ function ditherFS(
       const best = lut[((cr >> 3) << 10) | ((cg >> 3) << 5) | (cb >> 3)];
       out[pi] = best;
 
-      const qr = cr - palette[best * stride];
-      const qg = cg - palette[best * stride + 1];
-      const qb = cb - palette[best * stride + 2];
+      const p  = palette[best];
+      const qr = cr - p[0];
+      const qg = cg - p[1];
+      const qb = cb - p[2];
 
       if (x + 1 < width) {
         er[pi + 1] += qr * 7 / 16;
@@ -121,13 +117,18 @@ const tick = () => new Promise<void>(r => setTimeout(r, 0));
 
 export function useGifExport(
   containerRef: RefObject<HTMLDivElement | null>,
-  filename = "model.gif",
-  bgColor = "#000000",
+  filename    = "model.gif",
+  bgColor     = "#000000",
   transparent = false,
-  quality: GifQuality = "medium",
+  quality: GifQuality       = "medium",
   resolution: GifResolution = 480,
+  fps: GifFps                 = 25,
+  duration: GifDuration       = 5,
 ) {
-  const [phase, setPhase] = useState<RecordPhase>("idle");
+  const frameDelay = Math.round(1000 / fps);
+  const frameCount = Math.round((duration * 1000) / frameDelay);
+
+  const [phase,    setPhase]    = useState<RecordPhase>("idle");
   const [progress, setProgress] = useState(0);
   const abortRef = useRef(false);
 
@@ -141,25 +142,24 @@ export function useGifExport(
     setProgress(0);
 
     const scale = Math.min(1, resolution / canvas.width);
-    const w = Math.round(canvas.width * scale);
+    const w = Math.round(canvas.width  * scale);
     const h = Math.round(canvas.height * scale);
 
     const tmp = document.createElement("canvas");
-    tmp.width = w;
+    tmp.width  = w;
     tmp.height = h;
     const ctx = tmp.getContext("2d", { willReadFrequently: true })!;
 
     const frames: Uint8ClampedArray[] = [];
 
-    // ── Capture phase ─────────────────────────────────────────────────────────
+    // ── Capture ───────────────────────────────────────────────────────────────
     await new Promise<void>((resolve) => {
-      let count = 0;
-      let lastCapture = 0;
+      let count = 0, lastCapture = 0;
 
       const capture = (timestamp: number) => {
         if (abortRef.current) { resolve(); return; }
 
-        if (timestamp - lastCapture >= FRAME_DELAY) {
+        if (timestamp - lastCapture >= frameDelay) {
           lastCapture = timestamp;
           if (transparent) {
             ctx.clearRect(0, 0, w, h);
@@ -170,8 +170,8 @@ export function useGifExport(
           ctx.drawImage(canvas, 0, 0, w, h);
           frames.push(new Uint8ClampedArray(ctx.getImageData(0, 0, w, h).data));
           count++;
-          setProgress(Math.round((count / FRAME_COUNT) * 100));
-          if (count >= FRAME_COUNT) { resolve(); return; }
+          setProgress(Math.round((count / frameCount) * 100));
+          if (count >= frameCount) { resolve(); return; }
         }
 
         requestAnimationFrame(capture);
@@ -181,60 +181,57 @@ export function useGifExport(
 
     if (abortRef.current) { setPhase("idle"); return; }
 
-    // ── Encoding phase ────────────────────────────────────────────────────────
+    // ── Encode ────────────────────────────────────────────────────────────────
     setPhase("encoding");
     setProgress(0);
-    await tick(); // let browser paint "Kodowanie 0%" before heavy work
+    await tick(); // let browser paint "Enc. 0%" before heavy work
 
-    const cfg = QUALITY_CFG[quality];
+    const cfg    = QUALITY_CFG[quality];
     const format = transparent ? "rgba4444" : cfg.format;
-    // rgb444 and rgb565 both produce 3-byte palette entries; rgba4444 = 4 bytes
-    const stride = transparent ? 4 : 3;
 
     const { GIFEncoder, quantize, applyPalette } = await import("gifenc");
     const gif = GIFEncoder();
 
-    const samples = frames.filter((_, i) => i % cfg.sampleEvery === 0);
+    const samples  = frames.filter((_, i) => i % cfg.sampleEvery === 0);
     const combined = new Uint8ClampedArray(samples.reduce((s, f) => s + f.length, 0));
     let off = 0;
     for (const f of samples) { combined.set(f, off); off += f.length; }
 
-    const palette = quantize(combined, 256, { format, oneBitAlpha: transparent });
+    // palette is actually number[][] — [r,g,b][] or [r,g,b,a][] — despite the type declaration
+    const palette = quantize(combined, 256, { format, oneBitAlpha: transparent }) as Palette;
 
+    // Find transparent index: entry whose alpha component is 0 (after oneBitAlpha pass)
     let transparentIndex = -1;
     if (transparent) {
-      for (let i = 0; i < Math.floor(palette.length / stride); i++) {
-        if (palette[i * stride + 3] === 0) { transparentIndex = i; break; }
+      for (let i = 0; i < palette.length; i++) {
+        if (palette[i].length >= 4 && palette[i][3] === 0) { transparentIndex = i; break; }
       }
     }
 
-    const lut = cfg.dither ? buildLUT(palette, stride, transparentIndex) : null;
+    const lut = cfg.dither ? buildLUT(palette, transparentIndex) : null;
 
     for (let fi = 0; fi < frames.length; fi++) {
       const index = lut
-        ? ditherFS(frames[fi], palette, stride, lut, w, h, transparentIndex)
+        ? ditherFS(frames[fi], palette, lut, w, h, transparentIndex)
         : applyPalette(frames[fi], palette, format);
 
       gif.writeFrame(index, w, h, {
-        palette: fi === 0 ? palette : undefined,
-        delay: FRAME_DELAY,
-        repeat: 0,
+        palette:  fi === 0 ? palette : undefined,
+        delay:    frameDelay,
+        repeat:   0,
         ...(transparentIndex >= 0 ? { transparent: true, transparentIndex } : {}),
       });
 
-      const pct = Math.round(((fi + 1) / frames.length) * 100);
-      setProgress(pct);
-
-      // Yield periodically so the browser stays responsive and progress updates paint
+      setProgress(Math.round(((fi + 1) / frames.length) * 100));
       if (fi % YIELD_EVERY === YIELD_EVERY - 1) await tick();
     }
 
     gif.finish();
 
     const blob = new Blob([gif.bytes() as Uint8Array<ArrayBuffer>], { type: "image/gif" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement("a");
+    a.href     = url;
     a.download = filename;
     a.click();
     URL.revokeObjectURL(url);

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { HexColorPicker } from "react-colorful";
 import { usePanelContext } from "../../context/PanelContext";
-import type { RecordPhase, GifQuality, GifResolution } from "../../utils/useGifExport";
+import type { RecordPhase, GifQuality, GifResolution, GifFps, GifDuration } from "../../utils/useGifExport";
 
 export type MaterialType =
   | "chrome"
@@ -32,6 +32,10 @@ interface SceneControlsProps {
   onGifQualityChange: (v: GifQuality) => void;
   gifResolution: GifResolution;
   onGifResolutionChange: (v: GifResolution) => void;
+  gifFps: GifFps;
+  onGifFpsChange: (v: GifFps) => void;
+  gifDuration: GifDuration;
+  onGifDurationChange: (v: GifDuration) => void;
 }
 
 const MATERIALS: { value: MaterialType; label: string }[] = [
@@ -63,6 +67,10 @@ export default function SceneControls({
   onGifQualityChange,
   gifResolution,
   onGifResolutionChange,
+  gifFps,
+  onGifFpsChange,
+  gifDuration,
+  onGifDurationChange,
 }: SceneControlsProps) {
   const { openPanel, setOpenPanel } = usePanelContext();
   const open = openPanel === "scene";
@@ -202,15 +210,15 @@ export default function SceneControls({
             {/* GIF Export settings */}
             <li className="flex flex-col gap-2 rounded-xl px-2 py-2">
 
-              {/* Quality + Resolution selects */}
+              {/* Quality + Resolution + FPS + Duration selects */}
               <div className="grid grid-cols-2 gap-2">
                 <div className="flex flex-col gap-1">
-                  <span className="px-0.5 text-xs text-white/40">Jakość GIF</span>
+                  <span className="px-0.5 text-xs text-white/40">Jakość</span>
                   <select
                     value={gifQuality}
                     onChange={(e) => onGifQualityChange(e.target.value as GifQuality)}
                     disabled={isRecording}
-                    className="cursor-pointer rounded-xl border border-white/15 bg-white/8 px-2.5 py-1.5 text-xs text-white backdrop-blur-md outline-none transition-colors hover:bg-white/18 disabled:opacity-40"
+                    className="cursor-pointer rounded-xl border border-white/15 bg-white/8 px-2 py-1.5 text-xs text-white backdrop-blur-md outline-none transition-colors hover:bg-white/18 disabled:opacity-40"
                     style={{ appearance: "none" }}
                   >
                     <option value="low"    style={{ background: "#1a1a2e" }}>Niska</option>
@@ -224,12 +232,48 @@ export default function SceneControls({
                     value={gifResolution}
                     onChange={(e) => onGifResolutionChange(parseInt(e.target.value) as GifResolution)}
                     disabled={isRecording}
-                    className="cursor-pointer rounded-xl border border-white/15 bg-white/8 px-2.5 py-1.5 text-xs text-white backdrop-blur-md outline-none transition-colors hover:bg-white/18 disabled:opacity-40"
+                    className="cursor-pointer rounded-xl border border-white/15 bg-white/8 px-2 py-1.5 text-xs text-white backdrop-blur-md outline-none transition-colors hover:bg-white/18 disabled:opacity-40"
                     style={{ appearance: "none" }}
                   >
-                    <option value={360} style={{ background: "#1a1a2e" }}>360 px</option>
-                    <option value={480} style={{ background: "#1a1a2e" }}>480 px</option>
-                    <option value={720} style={{ background: "#1a1a2e" }}>720 px</option>
+                    <option value={240}  style={{ background: "#1a1a2e" }}>240 px</option>
+                    <option value={360}  style={{ background: "#1a1a2e" }}>360 px</option>
+                    <option value={480}  style={{ background: "#1a1a2e" }}>480 px</option>
+                    <option value={640}  style={{ background: "#1a1a2e" }}>640 px</option>
+                    <option value={720}  style={{ background: "#1a1a2e" }}>720 px</option>
+                    <option value={1080} style={{ background: "#1a1a2e" }}>1080 px</option>
+                  </select>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <span className="px-0.5 text-xs text-white/40">FPS</span>
+                  <select
+                    value={gifFps}
+                    onChange={(e) => onGifFpsChange(parseInt(e.target.value) as GifFps)}
+                    disabled={isRecording}
+                    className="cursor-pointer rounded-xl border border-white/15 bg-white/8 px-2 py-1.5 text-xs text-white backdrop-blur-md outline-none transition-colors hover:bg-white/18 disabled:opacity-40"
+                    style={{ appearance: "none" }}
+                  >
+                    <option value={10} style={{ background: "#1a1a2e" }}>10</option>
+                    <option value={15} style={{ background: "#1a1a2e" }}>15</option>
+                    <option value={20} style={{ background: "#1a1a2e" }}>20</option>
+                    <option value={25} style={{ background: "#1a1a2e" }}>25</option>
+                    <option value={30} style={{ background: "#1a1a2e" }}>30</option>
+                  </select>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <span className="px-0.5 text-xs text-white/40">Czas (s)</span>
+                  <select
+                    value={gifDuration}
+                    onChange={(e) => onGifDurationChange(parseInt(e.target.value) as GifDuration)}
+                    disabled={isRecording}
+                    className="cursor-pointer rounded-xl border border-white/15 bg-white/8 px-2 py-1.5 text-xs text-white backdrop-blur-md outline-none transition-colors hover:bg-white/18 disabled:opacity-40"
+                    style={{ appearance: "none" }}
+                  >
+                    <option value={2}  style={{ background: "#1a1a2e" }}>2 s</option>
+                    <option value={3}  style={{ background: "#1a1a2e" }}>3 s</option>
+                    <option value={5}  style={{ background: "#1a1a2e" }}>5 s</option>
+                    <option value={8}  style={{ background: "#1a1a2e" }}>8 s</option>
+                    <option value={10} style={{ background: "#1a1a2e" }}>10 s</option>
+                    <option value={15} style={{ background: "#1a1a2e" }}>15 s</option>
                   </select>
                 </div>
               </div>

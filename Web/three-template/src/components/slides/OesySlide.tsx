@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import OesyScene from "../scenes/OesyScene";
 import SceneControls, { type MaterialType } from "../scenes/SceneControls";
-import { useGifExport, type GifQuality, type GifResolution } from "../../utils/useGifExport";
+import { useGifExport, type GifQuality, type GifResolution, type GifFps, type GifDuration } from "../../utils/useGifExport";
 
 export default function OesySlide() {
   const [bgColor, setBgColor] = useState("#0a0010");
@@ -10,9 +10,11 @@ export default function OesySlide() {
   const [gifTransparent, setGifTransparent] = useState(false);
   const [gifQuality, setGifQuality] = useState<GifQuality>("medium");
   const [gifResolution, setGifResolution] = useState<GifResolution>(480);
+  const [gifFps, setGifFps] = useState<GifFps>(25);
+  const [gifDuration, setGifDuration] = useState<GifDuration>(5);
   const containerRef = useRef<HTMLDivElement>(null);
   const { exportGif, isRecording, phase: recordPhase, progress: recordProgress } =
-    useGifExport(containerRef, "oesy.gif", bgColor, gifTransparent, gifQuality, gifResolution);
+    useGifExport(containerRef, "oesy.gif", bgColor, gifTransparent, gifQuality, gifResolution, gifFps, gifDuration);
 
   const handleScreenshot = () => {
     const canvas = containerRef.current?.querySelector("canvas");
@@ -45,6 +47,8 @@ export default function OesySlide() {
         onGifQualityChange={setGifQuality}
         gifResolution={gifResolution}
         onGifResolutionChange={setGifResolution}
+        gifFps={gifFps}
+        onGifFpsChange={setGifFps}
       />
     </div>
   );

@@ -1,4 +1,8 @@
 declare module "gifenc" {
+  // quantize() returns an array of [r,g,b] or [r,g,b,a] number arrays,
+  // not a flat Uint8Array as the original declaration incorrectly stated.
+  type Palette = number[][];
+
   export function quantize(
     rgba: Uint8Array | Uint8ClampedArray,
     maxColors: number,
@@ -9,11 +13,11 @@ declare module "gifenc" {
       clearAlphaThreshold?: number;
       clearAlphaColor?: number;
     },
-  ): Uint8Array;
+  ): Palette;
 
   export function applyPalette(
     rgba: Uint8Array | Uint8ClampedArray,
-    palette: Uint8Array,
+    palette: Palette,
     format?: string,
   ): Uint8Array;
 
@@ -23,7 +27,7 @@ declare module "gifenc" {
       width: number,
       height: number,
       opts?: {
-        palette?: Uint8Array;
+        palette?: Palette;
         delay?: number;
         repeat?: number;
         transparent?: boolean;
