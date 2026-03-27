@@ -12,6 +12,7 @@ export default function OesySlide() {
   const [gifResolution, setGifResolution] = useState<GifResolution>(480);
   const [gifFps, setGifFps] = useState<GifFps>(25);
   const [gifDuration, setGifDuration] = useState<GifDuration>(5);
+  const [rotateSpeed, setRotateSpeed] = useState(0.5);
   const containerRef = useRef<HTMLDivElement>(null);
   const { exportGif, isRecording, phase: recordPhase, progress: recordProgress } =
     useGifExport(containerRef, "oesy.gif", bgColor, gifTransparent, gifQuality, gifResolution, gifFps, gifDuration);
@@ -28,7 +29,7 @@ export default function OesySlide() {
 
   return (
     <div ref={containerRef} className="relative h-full w-full">
-      <OesyScene bgColor={bgColor} materialType={material} autoRotate={autoRotate} />
+      <OesyScene bgColor={bgColor} materialType={material} autoRotate={autoRotate} rotateSpeed={rotateSpeed} />
       <SceneControls
         bgColor={bgColor}
         onBgColorChange={setBgColor}
@@ -49,6 +50,10 @@ export default function OesySlide() {
         onGifResolutionChange={setGifResolution}
         gifFps={gifFps}
         onGifFpsChange={setGifFps}
+        gifDuration={gifDuration}
+        onGifDurationChange={setGifDuration}
+        rotateSpeed={rotateSpeed}
+        onRotateSpeedChange={setRotateSpeed}
       />
     </div>
   );

@@ -8,6 +8,7 @@ interface ThreeSceneProps {
   bgColor?: string;
   materialType?: MaterialType;
   autoRotate?: boolean;
+  rotateSpeed?: number;
 }
 
 function BackgroundBlobs() {
@@ -65,6 +66,7 @@ export default function ThreeScene({
   bgColor = "#0d0d1a",
   materialType = "glass",
   autoRotate = true,
+  rotateSpeed = 0.5,
 }: ThreeSceneProps) {
   return (
     <div style={{ width: "100%", height: "100%", backgroundColor: bgColor }}>
@@ -82,7 +84,7 @@ export default function ThreeScene({
       </Suspense>
       <BackgroundBlobs />
       <Suspense fallback={null}>
-        <ThreeModel materialType={materialType} autoRotate={autoRotate} />
+        <ThreeModel materialType={materialType} autoRotate={autoRotate} rotateSpeed={rotateSpeed} />
       </Suspense>
     </Canvas>
     </div>

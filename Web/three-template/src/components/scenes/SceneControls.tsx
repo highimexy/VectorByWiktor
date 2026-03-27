@@ -12,7 +12,8 @@ export type MaterialType =
   | "matte"
   | "neon"
   | "obsidian"
-  | "hologram";
+  | "hologram"
+  | "water";
 
 interface SceneControlsProps {
   bgColor: string;
@@ -36,6 +37,8 @@ interface SceneControlsProps {
   onGifFpsChange: (v: GifFps) => void;
   gifDuration: GifDuration;
   onGifDurationChange: (v: GifDuration) => void;
+  rotateSpeed: number;
+  onRotateSpeedChange: (v: number) => void;
 }
 
 const MATERIALS: { value: MaterialType; label: string }[] = [
@@ -47,6 +50,7 @@ const MATERIALS: { value: MaterialType; label: string }[] = [
   { value: "neon", label: "Neon" },
   { value: "obsidian", label: "Obsidian" },
   { value: "hologram", label: "Hologram" },
+  { value: "water",    label: "Water" },
 ];
 
 export default function SceneControls({
@@ -71,6 +75,8 @@ export default function SceneControls({
   onGifFpsChange,
   gifDuration,
   onGifDurationChange,
+  rotateSpeed,
+  onRotateSpeedChange,
 }: SceneControlsProps) {
   const { openPanel, setOpenPanel } = usePanelContext();
   const open = openPanel === "scene";
@@ -203,6 +209,24 @@ export default function SceneControls({
                   }`}
                 />
               </button>
+            </li>
+
+            {/* Rotate speed */}
+            <li className="flex flex-col gap-1.5 rounded-xl px-2 py-2">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-medium text-white">Prędkość obrotu</p>
+                <span className="text-xs text-white/40">{rotateSpeed.toFixed(1)}×</span>
+              </div>
+              <input
+                type="range"
+                min={0.1}
+                max={3}
+                step={0.1}
+                value={rotateSpeed}
+                disabled={!autoRotate}
+                onChange={(e) => onRotateSpeedChange(parseFloat(e.target.value))}
+                className="w-full cursor-pointer accent-white disabled:opacity-40"
+              />
             </li>
 
             <div className="mx-2 my-1 border-t border-white/10" />

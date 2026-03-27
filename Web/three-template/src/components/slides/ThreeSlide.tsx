@@ -12,6 +12,7 @@ export default function ThreeSlide() {
   const [gifResolution, setGifResolution] = useState<GifResolution>(480);
   const [gifFps, setGifFps] = useState<GifFps>(25);
   const [gifDuration, setGifDuration] = useState<GifDuration>(5);
+  const [rotateSpeed, setRotateSpeed] = useState(0.5);
   const containerRef = useRef<HTMLDivElement>(null);
   const { exportGif, isRecording, phase: recordPhase, progress: recordProgress } =
     useGifExport(containerRef, "three.gif", bgColor, gifTransparent, gifQuality, gifResolution, gifFps, gifDuration);
@@ -28,7 +29,7 @@ export default function ThreeSlide() {
 
   return (
     <div ref={containerRef} className="relative h-full w-full">
-      <ThreeScene bgColor={bgColor} materialType={material} autoRotate={autoRotate} />
+      <ThreeScene bgColor={bgColor} materialType={material} autoRotate={autoRotate} rotateSpeed={rotateSpeed} />
       <SceneControls
         bgColor={bgColor}
         onBgColorChange={setBgColor}
@@ -51,6 +52,8 @@ export default function ThreeSlide() {
         onGifFpsChange={setGifFps}
         gifDuration={gifDuration}
         onGifDurationChange={setGifDuration}
+        rotateSpeed={rotateSpeed}
+        onRotateSpeedChange={setRotateSpeed}
       />
     </div>
   );

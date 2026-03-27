@@ -73,15 +73,28 @@ function makeMaterial(type: MaterialType): THREE.Material {
         metalness: 0.2,
         side: THREE.DoubleSide,
       });
+    case "water":
+      return new THREE.MeshPhysicalMaterial({
+        transmission: 0.95,
+        roughness: 0,
+        thickness: 1.2,
+        ior: 1.33,
+        color: new THREE.Color("#44aaff"),
+        metalness: 0,
+        reflectivity: 1,
+        envMapIntensity: 1.5,
+        side: THREE.DoubleSide,
+      });
   }
 }
 
 interface OesyModelProps {
   materialType?: MaterialType;
   autoRotate?: boolean;
+  rotateSpeed?: number;
 }
 
-export function OesyModel({ materialType = "chrome", autoRotate = true }: OesyModelProps) {
+export function OesyModel({ materialType = "chrome", autoRotate = true, rotateSpeed = 0.5 }: OesyModelProps) {
   const { scene } = useGLTF("/models/oesy/oesy.gltf");
   const ref = useRef<THREE.Group>(null);
 
@@ -96,7 +109,7 @@ export function OesyModel({ materialType = "chrome", autoRotate = true }: OesyMo
   }, [scene, material]);
 
   useFrame((_, delta) => {
-    if (ref.current && autoRotate) ref.current.rotation.y += delta * 0.5;
+    if (ref.current && autoRotate) ref.current.rotation.y += delta * rotateSpeed;
   });
 
   return (

@@ -12,14 +12,15 @@ type GLTFResult = {
 interface ThreeModelProps {
   materialType?: MaterialType;
   autoRotate?: boolean;
+  rotateSpeed?: number;
 }
 
-export function ThreeModel({ materialType = "glass", autoRotate = true }: ThreeModelProps) {
+export function ThreeModel({ materialType = "glass", autoRotate = true, rotateSpeed = 0.5 }: ThreeModelProps) {
   const { nodes } = useGLTF("/models/main/model.gltf") as unknown as GLTFResult;
   const ref = useRef<THREE.Group>(null);
 
   useFrame((_, delta) => {
-    if (ref.current && autoRotate) ref.current.rotation.y += delta * 0.8;
+    if (ref.current && autoRotate) ref.current.rotation.y += delta * rotateSpeed;
   });
 
   return (
@@ -91,6 +92,18 @@ export function ThreeModel({ materialType = "glass", autoRotate = true }: ThreeM
               iridescenceIOR={2.5}
               color="#88aaff"
               metalness={0.2}
+            />
+          )}
+          {materialType === "water" && (
+            <meshPhysicalMaterial
+              transmission={0.95}
+              roughness={0}
+              thickness={1.2}
+              ior={1.33}
+              color="#44aaff"
+              metalness={0}
+              reflectivity={1}
+              envMapIntensity={1.5}
             />
           )}
         </mesh>

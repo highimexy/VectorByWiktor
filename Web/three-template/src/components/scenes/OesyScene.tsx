@@ -8,12 +8,14 @@ interface OesySceneProps {
   bgColor?: string;
   materialType?: MaterialType;
   autoRotate?: boolean;
+  rotateSpeed?: number;
 }
 
 export default function OesyScene({
   bgColor = "#0a0010",
   materialType = "chrome",
   autoRotate = true,
+  rotateSpeed = 0.5,
 }: OesySceneProps) {
   return (
     <div style={{ width: "100%", height: "100%", backgroundColor: bgColor }}>
@@ -33,7 +35,7 @@ export default function OesyScene({
         <Environment preset="studio" />
       </Suspense>
       <Suspense fallback={null}>
-        <OesyModel materialType={materialType} autoRotate={autoRotate} />
+        <OesyModel materialType={materialType} autoRotate={autoRotate} rotateSpeed={rotateSpeed} />
       </Suspense>
     </Canvas>
     </div>
