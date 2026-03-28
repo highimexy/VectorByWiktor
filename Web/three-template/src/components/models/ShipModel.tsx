@@ -88,14 +88,14 @@ function makeMaterial(type: Exclude<MaterialType, "original">): THREE.Material {
   }
 }
 
-interface OesyModelProps {
+interface ShipModelProps {
   materialType?: MaterialType;
   autoRotate?: boolean;
   rotateSpeed?: number;
 }
 
-export function OesyModel({ materialType = "original", autoRotate = true, rotateSpeed = 0.5 }: OesyModelProps) {
-  const { scene } = useGLTF("/models/oesy/oesy.gltf");
+export function ShipModel({ materialType = "original", autoRotate = true, rotateSpeed = 0.5 }: ShipModelProps) {
+  const { scene } = useGLTF("/models/ship/dutch_ship_large_02_2k.gltf");
   const ref = useRef<THREE.Group>(null);
   const originalMaterials = useRef<Map<THREE.Mesh, THREE.Material | THREE.Material[]>>(new Map());
 

@@ -15,7 +15,7 @@ interface ThreeModelProps {
   rotateSpeed?: number;
 }
 
-export function ThreeModel({ materialType = "glass", autoRotate = true, rotateSpeed = 0.5 }: ThreeModelProps) {
+export function ThreeModel({ materialType = "original", autoRotate = true, rotateSpeed = 0.5 }: ThreeModelProps) {
   const { nodes } = useGLTF("/models/main/model.gltf") as unknown as GLTFResult;
   const ref = useRef<THREE.Group>(null);
 
@@ -27,6 +27,9 @@ export function ThreeModel({ materialType = "glass", autoRotate = true, rotateSp
     <group ref={ref}>
       <Center>
         <mesh geometry={nodes.Text.geometry} rotation={[-Math.PI / -2, 0, 0]}>
+          {materialType === "original" && (
+            <primitive object={nodes.Text.material} attach="material" />
+          )}
           {materialType === "glass" && (
             <MeshTransmissionMaterial
               transmission={1}

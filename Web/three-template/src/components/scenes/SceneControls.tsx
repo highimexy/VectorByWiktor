@@ -5,6 +5,7 @@ import { usePanelContext } from "../../context/PanelContext";
 import type { RecordPhase, GifQuality, GifResolution, GifFps, GifDuration } from "../../utils/useGifExport";
 
 export type MaterialType =
+  | "original"
   | "chrome"
   | "glass"
   | "wireframe"
@@ -42,6 +43,7 @@ interface SceneControlsProps {
 }
 
 const MATERIALS: { value: MaterialType; label: string }[] = [
+  { value: "original", label: "Oryginalny" },
   { value: "chrome", label: "Chrome" },
   { value: "glass", label: "Glass" },
   { value: "wireframe", label: "Wireframe" },

@@ -5,7 +5,7 @@ import { useGifExport, type GifQuality, type GifResolution, type GifFps, type Gi
 
 export default function ThreeSlide() {
   const [bgColor, setBgColor] = useState("#0d0d1a");
-  const [material, setMaterial] = useState<MaterialType>("glass");
+  const [material, setMaterial] = useState<MaterialType>("original");
   const [autoRotate, setAutoRotate] = useState(true);
   const [gifTransparent, setGifTransparent] = useState(false);
   const [gifQuality, setGifQuality] = useState<GifQuality>("medium");
