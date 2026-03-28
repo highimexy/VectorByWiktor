@@ -13,7 +13,7 @@ interface ShipSceneProps {
 }
 
 export default function ShipScene({
-  bgColor = "#0a0a1a",
+  bgColor = "#0a0010",
   materialType = "chrome",
   autoRotate = true,
   rotateSpeed = 0.5,

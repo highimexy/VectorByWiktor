@@ -16,7 +16,7 @@ interface UploadedSceneProps {
 
 export default function UploadedScene({
   scene,
-  bgColor = "#0d0d1a",
+  bgColor = "#0a0010",
   materialType = "original",
   autoRotate = true,
   rotateSpeed = 0.5,
