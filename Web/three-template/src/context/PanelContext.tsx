@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from "react";
 
-type OpenPanel = "project" | "scene" | null;
+type OpenPanel = "project" | "scene" | "controls" | null;
 
 interface PanelContextValue {
   openPanel: OpenPanel;

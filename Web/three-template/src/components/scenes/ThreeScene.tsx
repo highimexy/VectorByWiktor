@@ -1,6 +1,7 @@
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Environment } from "@react-three/drei";
-import { Suspense } from "react";
+import { Suspense, useRef } from "react";
+import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { ThreeModel } from "../models/ThreeModel";
 import type { MaterialType } from "./SceneControls";
 
@@ -68,8 +69,10 @@ export default function ThreeScene({
   autoRotate = true,
   rotateSpeed = 0.5,
 }: ThreeSceneProps) {
+  const controlsRef = useRef<OrbitControlsImpl>(null);
+
   return (
-    <div style={{ width: "100%", height: "100%", backgroundColor: bgColor }}>
+    <div style={{ width: "100%", height: "100%", backgroundColor: bgColor }} onDoubleClick={() => controlsRef.current?.reset()}>
     <Canvas
       camera={{ position: [0, 0, -4], fov: 50 }}
       style={{ width: "100%", height: "100%" }}
@@ -78,7 +81,7 @@ export default function ThreeScene({
       <ambientLight intensity={0.5} />
       <pointLight position={[5, 5, 5]} intensity={3} color="#ffffff" />
       <pointLight position={[-5, -3, 3]} intensity={2} color="#8060ff" />
-      <OrbitControls enableDamping target={[0, 0, 0]} />
+      <OrbitControls ref={controlsRef} enableDamping target={[0, 0, 0]} />
       <Suspense fallback={null}>
         <Environment preset="city" />
       </Suspense>

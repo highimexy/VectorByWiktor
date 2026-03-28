@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import gsap from "gsap";
 import { ALL_PROJECTS } from "../data/projects";
 import ProjectPanel from "./ProjectPanel";
+import ControlsHint from "./ControlsHint";
 import { usePanelContext } from "../context/PanelContext";
 
 export default function Carousel() {
@@ -142,6 +143,8 @@ export default function Carousel() {
           draggable={false}
         />
       </a>
+
+      <ControlsHint />
 
       {/* Panel trigger + panel */}
       <div className="fixed right-4 top-4 z-150">
