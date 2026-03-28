@@ -3,7 +3,7 @@ import ThreeScene from "../scenes/ThreeScene";
 import SceneControls, { type MaterialType } from "../scenes/SceneControls";
 import { useGifExport, type GifQuality, type GifResolution, type GifFps, type GifDuration } from "../../utils/useGifExport";
 
-export default function ThreeSlide() {
+export default function ThreeSlide({ isActive = false }: { isActive?: boolean }) {
   const [bgColor, setBgColor] = useState("#0d0d1a");
   const [material, setMaterial] = useState<MaterialType>("original");
   const [autoRotate, setAutoRotate] = useState(true);
@@ -30,7 +30,7 @@ export default function ThreeSlide() {
   return (
     <div ref={containerRef} className="relative h-full w-full">
       <ThreeScene bgColor={bgColor} materialType={material} autoRotate={autoRotate} rotateSpeed={rotateSpeed} />
-      <SceneControls
+      {isActive && <SceneControls
         bgColor={bgColor}
         onBgColorChange={setBgColor}
         material={material}
@@ -54,7 +54,7 @@ export default function ThreeSlide() {
         onGifDurationChange={setGifDuration}
         rotateSpeed={rotateSpeed}
         onRotateSpeedChange={setRotateSpeed}
-      />
+      />}
     </div>
   );
 }

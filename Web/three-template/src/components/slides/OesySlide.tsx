@@ -3,7 +3,7 @@ import OesyScene from "../scenes/OesyScene";
 import SceneControls, { type MaterialType } from "../scenes/SceneControls";
 import { useGifExport, type GifQuality, type GifResolution, type GifFps, type GifDuration } from "../../utils/useGifExport";
 
-export default function OesySlide() {
+export default function OesySlide({ isActive = false }: { isActive?: boolean }) {
   const [bgColor, setBgColor] = useState("#0a0010");
   const [material, setMaterial] = useState<MaterialType>("original");
   const [autoRotate, setAutoRotate] = useState(true);
@@ -30,7 +30,7 @@ export default function OesySlide() {
   return (
     <div ref={containerRef} className="relative h-full w-full">
       <OesyScene bgColor={bgColor} materialType={material} autoRotate={autoRotate} rotateSpeed={rotateSpeed} />
-      <SceneControls
+      {isActive && <SceneControls
         bgColor={bgColor}
         onBgColorChange={setBgColor}
         material={material}
@@ -54,7 +54,7 @@ export default function OesySlide() {
         onGifDurationChange={setGifDuration}
         rotateSpeed={rotateSpeed}
         onRotateSpeedChange={setRotateSpeed}
-      />
+      />}
     </div>
   );
 }

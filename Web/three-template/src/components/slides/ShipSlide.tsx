@@ -3,7 +3,7 @@ import ShipScene from "../scenes/ShipScene";
 import SceneControls, { type MaterialType } from "../scenes/SceneControls";
 import { useGifExport, type GifQuality, type GifResolution, type GifFps, type GifDuration } from "../../utils/useGifExport";
 
-export default function ShipSlide() {
+export default function ShipSlide({ isActive = false }: { isActive?: boolean }) {
   const [bgColor, setBgColor] = useState("#0a0a1a");
   const [material, setMaterial] = useState<MaterialType>("original");
   const [autoRotate, setAutoRotate] = useState(true);
@@ -30,7 +30,7 @@ export default function ShipSlide() {
   return (
     <div ref={containerRef} className="relative h-full w-full">
       <ShipScene bgColor={bgColor} materialType={material} autoRotate={autoRotate} rotateSpeed={rotateSpeed} />
-      <SceneControls
+      {isActive && <SceneControls
         bgColor={bgColor}
         onBgColorChange={setBgColor}
         material={material}
@@ -54,7 +54,7 @@ export default function ShipSlide() {
         onGifDurationChange={setGifDuration}
         rotateSpeed={rotateSpeed}
         onRotateSpeedChange={setRotateSpeed}
-      />
+      />}
     </div>
   );
 }

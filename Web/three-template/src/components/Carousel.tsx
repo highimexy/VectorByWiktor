@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import gsap from "gsap";
 import { ALL_PROJECTS } from "../data/projects";
 import ProjectPanel from "./ProjectPanel";
@@ -10,14 +10,17 @@ export default function Carousel() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(
     new Set(ALL_PROJECTS.map((p) => p.id)),
   );
+  const [autoPlay, setAutoPlay] = useState(true);
   const { openPanel, setOpenPanel } = usePanelContext();
   const panelOpen = openPanel === "project";
   const trackRef = useRef<HTMLDivElement>(null);
 
   const activeProjects = ALL_PROJECTS.filter((p) => selectedIds.has(p.id));
 
-  const goTo = (index: number) => {
+  const goTo = (index: number, pause = true) => {
     if (index < 0 || index >= activeProjects.length) return;
+    if (pause) setAutoPlay(false);
+    setOpenPanel(null);
     gsap.to(trackRef.current, {
       x: -index * window.innerWidth,
       duration: 0.75,
@@ -26,8 +29,26 @@ export default function Carousel() {
     setCurrent(index);
   };
 
+  // Auto-advance every 5 s
+  useEffect(() => {
+    if (!autoPlay) return;
+    const id = setInterval(() => {
+      setCurrent((prev) => {
+        const next = (prev + 1) % activeProjects.length;
+        gsap.to(trackRef.current, {
+          x: -next * window.innerWidth,
+          duration: 0.75,
+          ease: "power3.inOut",
+        });
+        return next;
+      });
+    }, 5000);
+    return () => clearInterval(id);
+  }, [autoPlay, activeProjects.length]);
+
   const toggleProject = (id: string) => {
     if (selectedIds.has(id) && selectedIds.size === 1) return; // minimum 1
+    setAutoPlay(false);
 
     const next = new Set(selectedIds);
     if (next.has(id)) {
@@ -65,11 +86,11 @@ export default function Carousel() {
         className="flex h-screen will-change-transform"
         style={{ width: `${activeProjects.length * 100}vw` }}
       >
-        {activeProjects.map((project) => {
+        {activeProjects.map((project, i) => {
           const Slide = project.component;
           return (
             <div key={project.id} className="h-screen w-screen shrink-0">
-              <Slide />
+              <Slide isActive={i === current} />
             </div>
           );
         })}
@@ -115,18 +136,36 @@ export default function Carousel() {
         </svg>
       </button>
 
-      {/* Dots */}
-      <div className="fixed bottom-7 left-1/2 z-50 flex -translate-x-1/2 gap-2.5">
-        {activeProjects.map((project, i) => (
-          <button
-            key={project.id}
-            onClick={() => goTo(i)}
-            aria-label={project.title}
-            className={`h-2 w-2 rounded-full border-none transition-all duration-200 cursor-pointer ${
-              i === current ? "scale-[1.4] bg-white" : "bg-white/30"
-            }`}
-          />
-        ))}
+      {/* Dots + play/pause */}
+      <div className="fixed bottom-7 left-1/2 z-50 flex -translate-x-1/2 items-center gap-3">
+        <div className="flex items-center gap-2.5">
+          {activeProjects.map((project, i) => (
+            <button
+              key={project.id}
+              onClick={() => goTo(i)}
+              aria-label={project.title}
+              className={`h-2 w-2 rounded-full border-none transition-all duration-200 cursor-pointer ${
+                i === current ? "scale-[1.4] bg-white" : "bg-white/30"
+              }`}
+            />
+          ))}
+        </div>
+        <button
+          onClick={() => setAutoPlay((v) => !v)}
+          aria-label={autoPlay ? "Zatrzymaj" : "Odtwórz"}
+          className="flex h-5 w-5 cursor-pointer items-center justify-center rounded-full border-none bg-transparent text-white/40 transition-colors hover:text-white"
+        >
+          {autoPlay ? (
+            <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="currentColor">
+              <rect x="5" y="4" width="4" height="16" rx="1" />
+              <rect x="15" y="4" width="4" height="16" rx="1" />
+            </svg>
+          ) : (
+            <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="currentColor">
+              <polygon points="5 3 19 12 5 21 5 3" />
+            </svg>
+          )}
+        </button>
       </div>
 
       {/* Logo – top left */}

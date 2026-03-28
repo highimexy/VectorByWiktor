@@ -7,7 +7,7 @@ export type Project = {
   id: string;
   title: string;
   tag: string;
-  component: ComponentType;
+  component: ComponentType<{ isActive?: boolean }>;
 };
 
 export const ALL_PROJECTS: Project[] = [

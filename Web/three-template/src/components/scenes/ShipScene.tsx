@@ -21,9 +21,12 @@ export default function ShipScene({
   const controlsRef = useRef<OrbitControlsImpl>(null);
 
   return (
-    <div style={{ width: "100%", height: "100%", backgroundColor: bgColor }} onDoubleClick={() => controlsRef.current?.reset()}>
+    <div
+      style={{ width: "100%", height: "100%", backgroundColor: bgColor }}
+      onDoubleClick={() => controlsRef.current?.reset()}
+    >
       <Canvas
-        camera={{ position: [0, 0, -10], fov: 50 }}
+        camera={{ position: [0, 0, -60], fov: 80 }}
         style={{ width: "100%", height: "100%" }}
         gl={{ alpha: true, preserveDrawingBuffer: true }}
       >
@@ -38,7 +41,11 @@ export default function ShipScene({
           <Environment preset="studio" />
         </Suspense>
         <Suspense fallback={null}>
-          <ShipModel materialType={materialType} autoRotate={autoRotate} rotateSpeed={rotateSpeed} />
+          <ShipModel
+            materialType={materialType}
+            autoRotate={autoRotate}
+            rotateSpeed={rotateSpeed}
+          />
         </Suspense>
       </Canvas>
     </div>

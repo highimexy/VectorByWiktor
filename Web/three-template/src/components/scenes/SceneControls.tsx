@@ -96,7 +96,7 @@ export default function SceneControls({
 
   return (
     <div
-      className="absolute right-4 top-15 z-100 flex flex-col items-end gap-2"
+      className="fixed right-4 top-15 z-100 flex flex-col items-end gap-2"
       onClick={(e) => e.stopPropagation()}
     >
       {/* Toggle button */}
