@@ -1,5 +1,3 @@
-# Blender-Three.js-JS
+VectorByWiktor 
 
-FreeCodeCamp.org https://www.youtube.com/watch?v=tdsQwuyS6DQ
-
-Timestamp: 21:57
+Galeria komponentow (Vector Components) + Galeria Konfiguratorow Produktu 3D (Vector Twins) + Laboratirium (Vector Lab)
